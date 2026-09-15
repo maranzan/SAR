@@ -6,21 +6,23 @@
  Les methodes peuvent etre appelées par deux taches en meme temps sauf si c'est fait du meme 
  coté de la liaison
 
- si un coté de la liaison est deconnecté, l'autre en est informé par une exception ChannelDisconected
+ 
+ 
+ Le channel ne fait pas de synchronisation !
  */
 
 abstract class Channel {
 
     
-    /*lit dans le Channel et ecrit dans bytes[] bytes a partir de offset un message de length octets */
+    /*lit dans le Channel et ecrit dans bytes[] bytes a partir de offset un message de length octets et retourne le nombre d'octets lus*/
     int read(byte[] bytes, int offset, int length);
 
-    /*ecrit dans le Channel les octets de byte bytes a partir de offset un message de length octets */
+    /*ecrit dans le Channel les octets de byte bytes a partir de offset un message de length octets et retourne le nombre d'octets ecrits*/
     int write(byte[] bytes, int offset, int length);
 
     /*deconnecte la liaison */
     void disconnect();
 
-    /*renvoie un booleen vrai si deconecté et faut si connecté */
+    /*renvoie un booleen vrai si deconecté et faux si connecté */
     boolean disconnected();
 }
