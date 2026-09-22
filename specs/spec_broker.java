@@ -19,7 +19,7 @@ abstract class Broker {
    * @throws IllegalArgumentException si port < 0
    * @throws IllegalStateException si un accept est déjà en attente sur ce port
    */
-    Channel accept(int port);
+    public abstract Channel accept(int port);
 
   /**
    * Se connecte au port donné du broker nommé name.
@@ -30,5 +30,5 @@ abstract class Broker {
    *
    * @throws IllegalArgumentException si port < 0
    */
-  Channel connect(String name, int port);
+  public abstract Channel connect(String name, int port);
 }

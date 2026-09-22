@@ -15,14 +15,14 @@ abstract class Channel {
 
     
     /*lit dans le Channel et ecrit dans bytes[] bytes a partir de offset un message de length octets et retourne le nombre d'octets lus*/
-    int read(byte[] bytes, int offset, int length);
+    public abstract int read(byte[] bytes, int offset, int length);
 
     /*ecrit dans le Channel les octets de byte bytes a partir de offset un message de length octets et retourne le nombre d'octets ecrits*/
-    int write(byte[] bytes, int offset, int length);
+    public abstract int write(byte[] bytes, int offset, int length);
 
     /*deconnecte la liaison */
-    void disconnect();
+    public abstract void disconnect();
 
     /*renvoie un booleen vrai si deconecté et faux si connecté */
-    boolean disconnected();
+    public abstract boolean disconnected();
 }

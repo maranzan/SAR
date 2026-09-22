@@ -1,0 +1,4 @@
+class rdv       (y'a un objet rdv dans un broker pour un port si accept en attente d'un premier connect)
+                (si y'a un ou plusieurs connect en attente sans accept)
+connect(), accept()
+un seul accept plsusieurs connect avec une liste
