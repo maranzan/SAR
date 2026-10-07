@@ -1,0 +1,83 @@
+Le serveur mémorise qui détient chaque mutex et qui attend,
+ dans l'ordre. Un client demande une seule fois : 
+ si le mutex est pris, sa demande est mise en attente.
+ c'est le serveur qui le rappellera quand son tour viendra.
+ 
+ Serveur:
+ 
+ Mutex
+name : String
+owner : Session
+waiting : LinkedList<Session>
+
+MutexServer
+mutexes : Map<String, Mutex>
+sessions : List<Session>
+
+Session
+queue : MessageQueue
+held : Set<String>
+
+
+Proxy Client : 
+
+MutexClient
+queue    : MessageQueue
+pending  : LinkedList<Request>
+inFlight : Request
+
+Request
+
+name     : String
+listener : LockListener
+
+
+
+protocole :
+
+LOCK	client -> serveur	opcode + nom du mutex
+GRANTED	serveur -> client	opcode + nom du mutex
+UNLOCK	client -> serveur	opcode + nom du mutex
+
+ 
+coté serveur :
+
+réception LOCK(name) de S :
+    m = mutexes.get(name)  ou création
+    si m.owner == null :
+        m.owner = S ; S.held.add(name)
+        envoyer GRANTED(name) à S
+    sinon :
+        m.waiting.addLast(S)
+
+réception UNLOCK(name) de S :
+    m = mutexes.get(name)
+    si m == null ou m.owner != S : ignorer
+    S.held.remove(name)
+    si m.waiting est vide :
+        m.owner = null
+    sinon :
+        next = m.waiting.removeFirst()
+        m.owner = next ; next.held.add(name)
+        envoyer GRANTED(name) à next
+
+closed() de la session S :
+    retirer S de toutes les files waiting
+    pour chaque name dans S.held : relâcher comme un UNLOCK
+    
+    
+    
+    
+coté client:
+
+lock(name, listener) :
+    pending.addLast(new Request(name, listener))
+    si inFlight == null : envoyer la suivante
+
+unlock(name) :
+    envoyer UNLOCK(name)
+
+réception GRANTED(name) :
+    r = inFlight ; inFlight = null
+    si pending non vide : envoyer la suivante
+    r.listener.granted()          // en dernier : la réaction peut rappeler lock()
